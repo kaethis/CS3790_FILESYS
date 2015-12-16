@@ -1,0 +1,78 @@
+#ifndef __CFILESYS__
+#define __FILESYS__
+
+
+#include <fstream>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+#define  FILELENGTH   12
+#define  DIRSIZE      32
+#define  FATSIZE    1024
+#define  BLOCKSIZE   512
+
+
+struct File{
+
+	char  name[FILELENGTH+1];
+
+	short  start, size;
+};
+
+
+class FileSystem{
+
+  private:
+
+	File  dir[DIRSIZE];
+
+	short  fat[FATSIZE];
+
+	char  block[FATSIZE][BLOCKSIZE];
+
+
+	int searchDir(std::string);
+
+	int availEntry(void);
+
+	int allocFAT(int, int&, int(&)[FATSIZE]); 
+
+
+	char encrypt(char);
+
+	char decrypt(char);
+
+  public:
+
+	FileSystem(){
+
+		format();
+	}
+
+
+	const File (&getDir())[DIRSIZE]{ return dir; }
+
+	const short (&getFAT())[FATSIZE]{ return fat; }
+
+	const char (&getBlock(int block_i))[BLOCKSIZE]{  return block[block_i]; }
+
+	int import(std::string, std::string);
+
+	int copy(std::string, std::string);
+
+	int outport(std::string, std::string);
+
+	int remove(std::string);
+
+	void format(void);
+
+	int load(void);
+
+	void save(void);
+};
+
+
+#endif
